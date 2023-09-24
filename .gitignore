@@ -1,2 +1,6 @@
 # Default ignored files
 /.idea/
+/resources/results/logs/2023/
+/src/utilitybox/auxiliar/__pycache__/
+/src/utilitybox/functionalities/__pycache__/
+/src/utilitybox/frames/__pycache__/
