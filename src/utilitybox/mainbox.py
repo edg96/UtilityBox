@@ -15,6 +15,10 @@ __maintainer__ = 'Dragos-Gabriel Enache'
 __email__ = 'edragosgabriel@gmail.com'
 __status__ = 'Development'
 
+
+__all__ = []
+
+
 """
 ================== Application description and main parent ==================
 
@@ -63,12 +67,12 @@ class MainBox(ctk.CTk):
 
         self.sort_button = ctk.CTkButton(self.operation_frame, text='Sort', font=('Helvetica', 12, 'bold'),
                                          fg_color='#00539C', text_color='white',
-                                         command=lambda: self.placeholder())
+                                         command=lambda: self.create_sort_window())
         self.sort_button.grid(row=1, column=0, padx=0, pady=(15, 0))
 
         self.delete_button = ctk.CTkButton(self.operation_frame, text='Delete', font=('Helvetica', 12, 'bold'),
                                            fg_color='#00539C', text_color='white',
-                                           command=lambda: self.placeholder())
+                                           command=lambda: self.create_delete_window())
         self.delete_button.grid(row=2, column=0, padx=0, pady=(15, 0))
 
         self.encryption_button = ctk.CTkButton(self.operation_frame, text='Data Protection',
@@ -103,6 +107,20 @@ class MainBox(ctk.CTk):
         from src.utilitybox.frames.search_window import SearchWindow
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
             self.toplevel_window = SearchWindow(self)
+        else:
+            self.toplevel_window.focus()
+
+    def create_sort_window(self):
+        from src.utilitybox.frames.sort_window import SortWindow
+        if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
+            self.toplevel_window = SortWindow(self)
+        else:
+            self.toplevel_window.focus()
+
+    def create_delete_window(self):
+        from src.utilitybox.frames.delete_window import DeleteWindow
+        if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
+            self.toplevel_window = DeleteWindow(self)
         else:
             self.toplevel_window.focus()
 

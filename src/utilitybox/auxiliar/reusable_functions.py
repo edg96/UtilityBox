@@ -139,3 +139,27 @@ def browse_folder(entry_widget: ctk.CTkEntry) -> None:
     if folder_path:
         entry_widget.delete(0, ctk.END)
         entry_widget.insert(0, folder_path)
+
+
+# Extensions split
+def split_extensions(list_of_file_extensions: str) -> list[str]:
+    """
+    Split a string of file extensions separated by commas into a list of extensions.
+
+    Parameters:
+        list_of_file_extensions (str): A string of file extensions separated by commas.
+
+    Returns:
+        list[str]: A list of cleaned file extensions.
+    """
+    cleaned_list_of_file_extensions = []
+    new_found_extension = ''
+    for letter in list_of_file_extensions:
+        if letter != ',':
+            new_found_extension += letter
+        else:
+            cleaned_list_of_file_extensions.append(new_found_extension.replace(' ', ''))
+            new_found_extension = ''
+    cleaned_list_of_file_extensions.append(new_found_extension.replace(' ', ''))
+
+    return cleaned_list_of_file_extensions
