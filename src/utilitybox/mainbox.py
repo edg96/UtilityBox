@@ -18,6 +18,8 @@ __status__ = 'Development'
 
 __all__ = []
 
+from src.utilitybox.frames.archive_window import ArchiveWindow
+from src.utilitybox.frames.data_protection_window import DataProtectionWindow
 
 """
 ================== Application description and main parent ==================
@@ -77,30 +79,22 @@ class MainBox(ctk.CTk):
 
         self.encryption_button = ctk.CTkButton(self.operation_frame, text='Data Protection',
                                                font=('Helvetica', 12, 'bold'), fg_color='#00539C', text_color='white',
-                                               command=lambda: self.placeholder())
+                                               command=lambda: self.create_data_protection_window())
         self.encryption_button.grid(row=3, column=0, padx=0, pady=(15, 0))
 
         self.preview_button = ctk.CTkButton(self.operation_frame, text='Archives', font=('Helvetica', 12, 'bold'),
                                             fg_color='#00539C', text_color='white',
-                                            command=lambda: self.placeholder())
+                                            command=lambda: self.create_archive_window())
         self.preview_button.grid(row=4, column=0, pady=(15, 0))
-
-        self.archives_button = ctk.CTkButton(self.operation_frame, text='Currency Converter',
-                                             font=('Helvetica', 12, 'bold'), fg_color='#00539C', text_color='white',
-                                             command=lambda: self.placeholder())
-        self.archives_button.grid(row=5, column=0, pady=(15, 0))
 
         self.clear_log_button = ctk.CTkButton(self.operation_frame, text='Clear log', font=('Helvetica', 12, 'bold'),
                                               fg_color='#00539C', text_color='white',
                                               command=self.button_click)
-        self.clear_log_button.grid(row=6, column=0, pady=(95, 0))
+        self.clear_log_button.grid(row=8, column=0, pady=(145, 0))
 
         self.log_frame = ctk.CTkScrollableFrame(master=self, width=580, height=360, corner_radius=20,
                                                 border_width=1, border_color='#474B4F')
         self.log_frame.grid(row=0, column=2, padx=15, pady=(13, 0))
-
-    def placeholder(self):
-        pass
 
     # Create each window from
     def create_search_window(self):
@@ -121,6 +115,20 @@ class MainBox(ctk.CTk):
         from src.utilitybox.frames.delete_window import DeleteWindow
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
             self.toplevel_window = DeleteWindow(self)
+        else:
+            self.toplevel_window.focus()
+
+    def create_data_protection_window(self):
+        from src.utilitybox.frames.data_protection_window import DataProtectionWindow
+        if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
+            self.toplevel_window = DataProtectionWindow(self)
+        else:
+            self.toplevel_window.focus()
+
+    def create_archive_window(self):
+        from src.utilitybox.frames.archive_window import ArchiveWindow
+        if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
+            self.toplevel_window = ArchiveWindow(self)
         else:
             self.toplevel_window.focus()
 
@@ -161,15 +169,4 @@ def check_log_folders() -> None:
 
 if __name__ == '__main__':
     mainbox = MainBox()
-    check_log_folders()
-    print(f'Author: {__author__}')
-    print(f'Copyright: {__copyright__}')
-    print(f'Credits: {__credits__}')
-
-    print(f'License: {__license__}')
-    print(f'Version: {__version__}')
-    print(f'Maintainer: {__maintainer__}')
-    print(f'Email: {__email__}')
-    print(f'Status: {__status__}')
-
     mainbox.mainloop()
