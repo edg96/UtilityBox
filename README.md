@@ -21,7 +21,7 @@ UtilityBox is a versatile collection of Python utilities designed to simplify co
 <div>
     <br>Log files are distributed by year and operation. You can check them to see exactly which files were modified, including the time (hour, minute, and seconds). Everything is monitored and detailed to help you keep track of your operations.</br>
     </br>
-    <img src="resources/githubimages/C1.png" width="400" alt="Screenshot 5"/>
+    <img src="resources/githubimages/C1.jpg" width="400" alt="Screenshot 5"/>
     <img src="resources/githubimages/C4.jpg" width="400" alt="Screenshot 6"/>
     </br>
     <img src="resources/githubimages/C2.jpg" width="400" alt="Screenshot 6"/>
@@ -30,7 +30,7 @@ UtilityBox is a versatile collection of Python utilities designed to simplify co
 
 ## YouTube Presentation
 
-[![Watch the video](https://img.youtube.com/vi/kwWJcXiFFos/hqdefault.jpg)](https://youtu.be/kwWJcXiFFos?si=eM-IfuI7DZh7t31L)
+[![Watch the video](https://img.youtube.com/vi/YAqtHvMKZis/hqdefault.jpg)](https://youtu.be/YAqtHvMKZis?si=eH7NYPJWRCJrLAPa)
 
 ## Features
 
