@@ -1,7 +1,7 @@
 import os.path
 import shutil
 
-from src.utilitybox.auxiliar import reusable_functions
+from auxiliar import reusable_functions
 
 
 class Sort:

@@ -3,10 +3,10 @@ import tkinter as tk
 
 import customtkinter as ctk
 
-from src.utilitybox.auxiliar import log_functions, reusable_functions
-from src.utilitybox.functionalities.decryption import Decryption
-from src.utilitybox.functionalities.encryption import Encryption
-from src.utilitybox.auxiliar.path_validator import check_path_existence
+from auxiliar import log_functions, reusable_functions
+from functionalities.decryption import Decryption
+from functionalities.encryption import Encryption
+from auxiliar.path_validator import check_path_existence
 
 """
 File encryption parameters (used for radio buttons).

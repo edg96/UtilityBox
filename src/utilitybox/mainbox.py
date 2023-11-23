@@ -2,8 +2,8 @@ import os.path
 
 import customtkinter as ctk
 
-from src.utilitybox.auxiliar import reusable_functions
-from src.utilitybox.auxiliar.configure_log import LogConfigurer
+from auxiliar import reusable_functions
+from auxiliar.configure_log import LogConfigurer
 
 __author__ = 'Dragos-Gabriel Enache'
 __copyright__ = 'N/A'
@@ -18,8 +18,6 @@ __status__ = 'Development'
 
 __all__ = []
 
-from src.utilitybox.frames.archive_window import ArchiveWindow
-from src.utilitybox.frames.data_protection_window import DataProtectionWindow
 
 """
 ================== Application description and main parent ==================
@@ -98,35 +96,35 @@ class MainBox(ctk.CTk):
 
     # Create each window from
     def create_search_window(self):
-        from src.utilitybox.frames.search_window import SearchWindow
+        from frames.search_window import SearchWindow
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
             self.toplevel_window = SearchWindow(self)
         else:
             self.toplevel_window.focus()
 
     def create_sort_window(self):
-        from src.utilitybox.frames.sort_window import SortWindow
+        from frames.sort_window import SortWindow
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
             self.toplevel_window = SortWindow(self)
         else:
             self.toplevel_window.focus()
 
     def create_delete_window(self):
-        from src.utilitybox.frames.delete_window import DeleteWindow
+        from frames.delete_window import DeleteWindow
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
             self.toplevel_window = DeleteWindow(self)
         else:
             self.toplevel_window.focus()
 
     def create_data_protection_window(self):
-        from src.utilitybox.frames.data_protection_window import DataProtectionWindow
+        from frames.data_protection_window import DataProtectionWindow
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
             self.toplevel_window = DataProtectionWindow(self)
         else:
             self.toplevel_window.focus()
 
     def create_archive_window(self):
-        from src.utilitybox.frames.archive_window import ArchiveWindow
+        from frames.archive_window import ArchiveWindow
         if self.toplevel_window is None or not self.toplevel_window.winfo_exists():
             self.toplevel_window = ArchiveWindow(self)
         else:

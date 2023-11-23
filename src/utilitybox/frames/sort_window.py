@@ -3,9 +3,9 @@ import tkinter as tk
 
 import customtkinter as ctk
 
-from src.utilitybox.auxiliar import log_functions, reusable_functions
-from src.utilitybox.auxiliar.path_validator import check_path_existence
-from src.utilitybox.functionalities.sort import Sort
+from auxiliar import log_functions, reusable_functions
+from auxiliar.path_validator import check_path_existence
+from functionalities.sort import Sort
 
 
 """

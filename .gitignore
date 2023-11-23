@@ -1,5 +1,12 @@
-# Default ignored files
-/.idea/
+# General
+/.venv/
 /src/utilitybox/auxiliar/__pycache__/
 /src/utilitybox/functionalities/__pycache__/
 /src/utilitybox/frames/__pycache__/
+
+# IDE Specific folder/ files
+# For PyCharm users
+/.idea/
+
+# For Visual Studio Code users
+.vscode

@@ -2,7 +2,7 @@ import os
 import calendar
 from datetime import date
 
-from src.utilitybox.auxiliar import reusable_functions
+from auxiliar import reusable_functions
 
 
 class LogConfigurer:

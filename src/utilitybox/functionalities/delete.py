@@ -1,6 +1,6 @@
 import os.path
 
-from src.utilitybox.auxiliar import reusable_functions
+from auxiliar import reusable_functions
 
 
 class Delete:

@@ -2,9 +2,9 @@ import os
 
 import customtkinter as ctk
 
-from src.utilitybox.auxiliar import log_functions, reusable_functions
-from src.utilitybox.auxiliar.path_validator import check_path_existence
-from src.utilitybox.functionalities.search import Search
+from auxiliar import log_functions, reusable_functions
+from auxiliar.path_validator import check_path_existence
+from functionalities.search import Search
 
 
 def _build_message_and_log(operation_specific_identifier: str, operation_id: int, files_found: list[str]) -> None:

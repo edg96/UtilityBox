@@ -1,7 +1,7 @@
 import os.path
 import logging
 
-from src.utilitybox.auxiliar.configure_log import LogConfigurer
+from auxiliar.configure_log import LogConfigurer
 
 
 def formatting_log(file_path: str, provided_format: str) -> None:

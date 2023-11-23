@@ -3,9 +3,9 @@ import tkinter as tk
 
 import customtkinter as ctk
 
-from src.utilitybox.auxiliar import log_functions, reusable_functions
-from src.utilitybox.functionalities.delete import Delete
-from src.utilitybox.auxiliar.path_validator import check_path_existence
+from auxiliar import log_functions, reusable_functions
+from functionalities.delete import Delete
+from auxiliar.path_validator import check_path_existence
 
 """
 File deletion parameters (used for radio buttons).

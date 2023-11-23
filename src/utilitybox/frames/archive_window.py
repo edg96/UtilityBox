@@ -3,9 +3,9 @@ import tkinter as tk
 
 import customtkinter as ctk
 
-from src.utilitybox.functionalities.archive import Archive
-from src.utilitybox.auxiliar import reusable_functions, log_functions
-from src.utilitybox.auxiliar.path_validator import check_path_existence
+from functionalities.archive import Archive
+from auxiliar import reusable_functions, log_functions
+from auxiliar.path_validator import check_path_existence
 
 """
 File archieving parameters (used for radio buttons).

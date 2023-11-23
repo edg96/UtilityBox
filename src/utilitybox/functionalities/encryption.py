@@ -2,7 +2,7 @@ import os
 
 from cryptography.fernet import Fernet
 
-from src.utilitybox.auxiliar import reusable_functions
+from auxiliar import reusable_functions
 
 
 class Encryption:
