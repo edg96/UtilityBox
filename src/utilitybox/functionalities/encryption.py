@@ -2,25 +2,29 @@ import os
 
 from cryptography.fernet import Fernet
 
-from auxiliar import reusable_functions
+from src.utilitybox.auxiliar.project_paths import get_project_keys_path
 
 
 class Encryption:
     """
-    Utility class for encrypting a file text and allocating it a specific key that can decrypt it.
-
-    Parameters:
-        file_path (str): The folder path where the file is located.
+    Utility class for encrypting a text file and managing encryption keys.
 
     Attributes:
-        file_key_pair (dict[str, str]): A dictionary containing the file name of the encrypted text file
+        self.file_path (str): The path of the file to be encrypted.
+        self.file_key_pair (dict[str, str]): A dictionary containing the file name of the encrypted text file
             and the full path associated with the key that was generated in the process.
     """
     # The default path where the keys are stored
     # Keys names are a one to one match with the name of the text file for easy association
-    default_key_folder = reusable_functions.get_project_keys_path()
+    default_key_folder = get_project_keys_path()
 
     def __init__(self, file_path: str):
+        """
+        Initialize the Encryption object.
+
+        Params:
+            file_path (str): The path of the file to be encrypted.
+        """
         self.file_path = file_path
         self.file_key_pair = {}
 
@@ -28,7 +32,7 @@ class Encryption:
         """
         Generate a new encryption key and save it to a key type file.
 
-        Parameters:
+        Params:
             key_path (str, optional): The path where the encryption key file will be saved.
                 Defaults to the class's default_key_path.
         """
@@ -53,11 +57,14 @@ class Encryption:
         """
         Encrypt the contents of the file using the provided encryption key.
 
-        Parameters:
+        Params:
             key (bytes): The encryption key associated with a specific file.
         """
         fernet = Fernet(key)
 
-        data_from_file = reusable_functions.read_from_file_by_line(self.file_path, 'rb')
-        encrypted_data = fernet.encrypt(bytes(data_from_file))
-        reusable_functions.write_to_file(self.file_path, encrypted_data, 'wb')
+        with open(self.file_path, 'rb') as file:
+            data_from_file = file.read()
+
+        encrypted_data = fernet.encrypt(data_from_file)
+        with open(self.file_path, 'wb') as file:
+            file.write(encrypted_data)

@@ -2,22 +2,19 @@ import os.path
 
 import customtkinter as ctk
 
-from auxiliar import reusable_functions
-from auxiliar.configure_log import LogConfigurer
+from src.utilitybox.auxiliar.folders_configurer import FoldersConfigure
+from src.utilitybox.auxiliar.project_paths import get_project_icons_path
 
 __author__ = 'Dragos-Gabriel Enache'
 __copyright__ = 'N/A'
 __credits__ = ['N/A']
-
 __license__ = 'N/A'
 __version__ = "1.0.1"
 __maintainer__ = 'Dragos-Gabriel Enache'
 __email__ = 'edragosgabriel@gmail.com'
 __status__ = 'Development'
 
-
 __all__ = []
-
 
 """
 ================== Application description and main parent ==================
@@ -51,9 +48,9 @@ class MainBox(ctk.CTk):
         self.configure(bg='#222629')
         self.window_already_open = False
         self.toplevel_window = None
-        self.numberentries = 0
+        self.number_entries = 0
         self.after(250, lambda: self.iconbitmap(
-            os.path.join(reusable_functions.get_project_icons_path(), 'Main.ico')))
+            os.path.join(get_project_icons_path(), 'Main.ico')))
 
         self.operation_frame = ctk.CTkFrame(master=self, width=172, height=400, corner_radius=20,
                                             border_width=1, border_color='#474B4F')
@@ -87,7 +84,7 @@ class MainBox(ctk.CTk):
 
         self.clear_log_button = ctk.CTkButton(self.operation_frame, text='Clear log', font=('Helvetica', 12, 'bold'),
                                               fg_color='#00539C', text_color='white',
-                                              command=self.button_click)
+                                              command=lambda: self.update_log(False))
         self.clear_log_button.grid(row=8, column=0, pady=(145, 0))
 
         self.log_frame = ctk.CTkScrollableFrame(master=self, width=580, height=360, corner_radius=20,
@@ -130,41 +127,35 @@ class MainBox(ctk.CTk):
         else:
             self.toplevel_window.focus()
 
-    def update_log(self, log_message: str, specific_operation_color: str) -> None:
+    def update_log(self, update_mode: bool, *args) -> None:
         """
-        Updates the logging frame box with the message given.
+        Updates the logging frame with a new log entry or clears the log.
 
         Parameters:
-            log_message (str): The log message to be displayed.
-            specific_operation_color (str): The color for displaying the log message.
-
-        Returns:
-            None
+            update_mode (bool): True to add a new log entry, False to clear the log.
+            *args: Additional arguments. If update_mode is True:
+                - args[0] (str): The log message.
+                - args[1] (str): The specific operation color for styling the log entry.
         """
-        log_text = ctk.CTkTextbox(master=self.log_frame, width=565, height=20, corner_radius=20,
-                                  fg_color=specific_operation_color,
-                                  font=('Helvetica', 14, 'bold'))
-        log_text.grid(row=self.numberentries, column=0, pady=(0, 10), sticky='w')
-        log_text.insert(ctk.END, log_message)
-        self.numberentries += 1
+        if update_mode:
+            log_message = args[0]
+            specific_operation_color = args[1]
 
-
-def check_log_folders() -> None:
-    """
-    Create logging folders if they do not exist.
-
-    This function initializes the Log Configurer and checks for the year, month, and category folders.
-    If any of these folders are missing, it creates them.
-
-    Returns:
-        None
-    """
-    log_configurer = LogConfigurer()
-    log_configurer.check_and_create_year_folder()
-    log_configurer.check_and_create_month_folder()
-    log_configurer.create_category()
+            log_text = ctk.CTkTextbox(master=self.log_frame, width=565, height=20, corner_radius=20,
+                                      fg_color=specific_operation_color,
+                                      font=('Helvetica', 14, 'bold'))
+            log_text.grid(row=self.number_entries, column=0, pady=(0, 10), sticky='w')
+            log_text.insert(ctk.END, log_message)
+            self.number_entries += 1
+        else:
+            for widget in self.log_frame.winfo_children():
+                widget.destroy()
+            self.number_entries = 0
 
 
 if __name__ == '__main__':
+    folder_configure = FoldersConfigure()
+    folder_configure.check_folders_setup()
+
     mainbox = MainBox()
     mainbox.mainloop()

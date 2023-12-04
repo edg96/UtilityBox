@@ -3,86 +3,29 @@ import tkinter as tk
 
 import customtkinter as ctk
 
-from auxiliar import log_functions, reusable_functions
-from auxiliar.path_validator import check_path_existence
-from functionalities.sort import Sort
-
+from src.utilitybox.auxiliar.extension_operations import group_files_by_extensions
+from src.utilitybox.auxiliar.file_operations import browse_folder
+from src.utilitybox.auxiliar.log_functions import update_file_log
+from src.utilitybox.auxiliar.operations_messages import log_basic_operation_results
+from src.utilitybox.auxiliar.log_messages import path_invalid_message, update_display_log
+from src.utilitybox.auxiliar.project_paths import get_project_icons_path
+from src.utilitybox.functionalities.sort import Sort
 
 """
-File sorting parameters (used for radio buttons).
+File sorting Params (used for radio buttons).
 """
 SORT_SINGLE_EXTENSION = 1
 SORT_MULTIPLE_EXTENSIONS = 2
 SORT_BY_KEYWORD = 3
 
 
-def _log_sigle_multiple_ext_results(operation_specific_identifier: str, operation_id: int, files_sorted: dict[str, list[str]]) -> None:
-    """
-    Log the results of sorting files by single or multiple extensions.
-
-    Parameters:
-        operation_specific_identifier (str): The identifier for the sorting operation.
-        operation_id (int): The operation's status code (200 for success, 204 for no content, 404 for error).
-        files_sorted (dict[str, list[str]]): A dictionary containing sorted files grouped by extension.
-    """
-    # Construct a log message with sorting results and update the file log.
-    log_file_message = (f'[{operation_specific_identifier.upper()}: {operation_id}]:'
-                        f'\nSorted the following files:')
-
-    if files_sorted:
-        for extension in files_sorted:
-            log_file_message = log_file_message + f'\n\tFiles of type: {extension}'
-            for index, file in enumerate(files_sorted[extension], start=1):
-                log_file_message = log_file_message + f'\n\t\t{file}'
-
-    log_functions.update_file_log(log_file_message, operation_specific_identifier)
-
-
-def _log_keyword_ext_results(operation_specific_identifier: str, operation_id: int, keyword_extension: str, files_sorted: dict[str, str]) -> None:
-    """
-    Log the results of sorting files by a keyword and an extension.
-
-    Parameters:
-        operation_specific_identifier (str): The identifier for the sorting operation.
-        operation_id (int): The operation's status code (200 for success, 204 for no content, 404 for error).
-        keyword_extension (str): The keyword extension used for sorting.
-        files_sorted (dict[str, str]): A dictionary containing old file names mapped to new file names.
-    """
-    # Construct a log message with sorting results and update the file log.
-    log_file_message = (f'[{operation_specific_identifier.upper()}: {operation_id}]:'
-                        f'\nSorted the following files:'
-                        f'\n\tFiles of type: {keyword_extension}')
-
-    if files_sorted:
-        for old_file in files_sorted.keys():
-            log_file_message = log_file_message + f'\n\t\t{old_file} -> {files_sorted[old_file]}'
-
-    log_functions.update_file_log(log_file_message, operation_specific_identifier)
-
-
-def _log_no_results(operation_specific_identifier: str, operation_id: int) -> None:
-    """
-    Log when no files were sorted in a sorting operation.
-
-    Parameters:
-        operation_specific_identifier (str): The identifier for the sorting operation.
-        operation_id (int): The operation's status code (200 for success, 204 for no content, 404 for error).
-    """
-    # Construct a log message indicating no files were sorted and update the file log.
-    log_file_message = (f'[{operation_specific_identifier.upper()}: {operation_id}]:'
-                        f'\nSorted the following files:'
-                        f'\n\tNone')
-
-    log_functions.update_file_log(log_file_message, operation_specific_identifier)
-
-
-def _determine_sort_type(mainbox, operation_specific_identifier: str, radio_option: int,
-                         folder_path: str, file_extension: str, list_of_file_extensions: str,
-                         keyword: str, keyword_extension: str, new_name: str) -> None:
+def _perform_sort(mainbox, operation_specific_identifier: str, radio_option: int,
+                  folder_path: str, file_extension: str, list_of_file_extensions: str,
+                  keyword: str, keyword_extension: str, new_name: str) -> None:
     """
     Determine the type of sorting operation and perform the sorting based on user inputs.
 
-    Parameters:
+    Params:
         mainbox: An instance of the MainBox class for updating the main window.
         operation_specific_identifier (str): The identifier for the sorting operation.
         radio_option (int): The selected radio button option for sorting.
@@ -97,56 +40,55 @@ def _determine_sort_type(mainbox, operation_specific_identifier: str, radio_opti
         This function performs file sorting and logs the results.
     """
     file_extension_lower = file_extension.lower()
-
     operation_code = {'OK': 200, 'NO CONTENT': 204, 'BAD REQUEST': 404}
 
-    operation_id = operation_code['BAD REQUEST']
-    if not check_path_existence(folder_path):
-        log_message = reusable_functions.path_invalid_message(operation_specific_identifier, operation_id, folder_path)
-        log_functions.update_file_log(log_message, operation_specific_identifier)
-        reusable_functions.update_display_log(mainbox, operation_specific_identifier, operation_id)
+    results_id = operation_code['BAD REQUEST']
+    if not os.path.exists(folder_path):
+        log_message = path_invalid_message(operation_specific_identifier, results_id, folder_path)
+        update_file_log(log_message, operation_specific_identifier)
+        update_display_log(mainbox, operation_specific_identifier, results_id)
         return
 
     sort = Sort(folder_path)
 
     try:
         if radio_option == SORT_SINGLE_EXTENSION:
-            sort.check_folder_existence(file_extension_lower)
-            sort.indexing_single_extension(file_extension_lower)
+            sort.index_single_extension(file_extension_lower)
         elif radio_option == SORT_MULTIPLE_EXTENSIONS:
-            sort.indexing_multiple_extensions(list_of_file_extensions)
+            sort.index_multiple_extensions(list_of_file_extensions)
         else:
             sort.sort_and_index_by_keyword(keyword, keyword_extension, new_name)
     except Exception as e:
         print(e)
 
-    operation_id = operation_code['OK']
-    if not sort.files_per_extension and not sort.files_by_keyword:
-        operation_id = operation_code['NO CONTENT']
+    results_id = operation_code['OK']
+    if not sort.files_moved:
+        results_id = operation_code['NO CONTENT']
 
-    reusable_functions.update_display_log(mainbox, operation_specific_identifier, operation_id)
+    update_display_log(mainbox, operation_specific_identifier, results_id)
 
-    if sort.files_per_extension:
-        _log_sigle_multiple_ext_results(operation_specific_identifier, operation_id, sort.files_per_extension)
-    elif sort.files_by_keyword:
-        _log_keyword_ext_results(operation_specific_identifier, operation_id, keyword_extension, sort.files_by_keyword)
-    else:
-        _log_no_results(operation_specific_identifier, operation_id)
+    grouped_files = group_files_by_extensions(sort.files_moved)
+
+    log_basic_operation_results(operation_specific_identifier, results_id, grouped_files)
 
 
 class SortWindow(ctk.CTkToplevel):
+    """
+    Create a window for the sort functionality.
+
+    Notes:
+        The window will not close after the search is performed.
+        The user can edit and modify the values as needed.
+        The window must be closed manually.
+    """
+
     def __init__(self, mainbox):
         """
-        Create a window for the sort functionality.
+        Initialize the SortWindow object.
 
-        Parameters:
-            mainbox (MainBox): An instance of the MainBox class that contain usefull information
-                used for different functions in order to keep the main window up to date.
-
-        Notes:
-            The window will not close after the search is performed.
-            The user can edit and modify the values as needed.
-            The window must be closed manually.
+        Params:
+            mainbox (MainBox): An instance of the MainBox class that contains useful information
+                used for different functions to keep the main window up to date.
         """
         super().__init__()
         self.title(' Sort')
@@ -157,7 +99,7 @@ class SortWindow(ctk.CTkToplevel):
         self.radio_current_option = 0
         self.dropdown_current_option = ''
         self.after(250, lambda: self.iconbitmap(
-            (os.path.join(reusable_functions.get_project_icons_path(), 'Sort.ico'))))
+            (os.path.join(get_project_icons_path(), 'Sort.ico'))))
 
         # Widgets functions and variables
         def radiobutton_event():
@@ -180,7 +122,7 @@ class SortWindow(ctk.CTkToplevel):
         self.folder_path_entry = ctk.CTkEntry(master=self, width=220)
         self.folder_path_button = ctk.CTkButton(
             master=self, text='Browse folder', font=('Helvetica', 12, 'bold'), fg_color='#00539C', text_color='white',
-            command=lambda: reusable_functions.browse_folder(self.folder_path_entry))
+            command=lambda: browse_folder(self.folder_path_entry))
 
         # Single extension sorting
         radio_var = tk.IntVar(value=0)
@@ -197,7 +139,8 @@ class SortWindow(ctk.CTkToplevel):
         self.sort_by_multiple_extensions_radiobutton = ctk.CTkRadioButton(
             master=self, text='Sort by multiple extensions',
             command=radiobutton_event, variable=radio_var, value=2)
-        self.sort_by_multiple_extensions_text = ctk.CTkLabel(master=self, text='Enter all the extensions separated \nby commas:\t\t        ')
+        self.sort_by_multiple_extensions_text = ctk.CTkLabel(master=self,
+                                                             text='Enter all the extensions separated \nby commas:\t\t        ')
         self.sort_by_multiple_extension_entry = ctk.CTkEntry(master=self, width=220)
 
         # Keyword sorting
@@ -214,10 +157,11 @@ class SortWindow(ctk.CTkToplevel):
         # Action buttons
         self.start_sorting_button = ctk.CTkButton(
             master=self, text='Start sorting', font=('Helvetica', 12, 'bold'), fg_color='green', text_color='white',
-            command=lambda: _determine_sort_type(mainbox, self.operation_unique_identifier, self.radio_current_option,
-                                                 self.folder_path_entry.get(), self.dropdown_current_option,
-                                                 self.sort_by_multiple_extension_entry.get(), self.sort_by_keyword_entry.get(),
-                                                 self.sort_by_keyword_extension_entry.get(), self.sort_by_keyword_new_name_entry.get()))
+            command=lambda: _perform_sort(mainbox, self.operation_unique_identifier, self.radio_current_option,
+                                          self.folder_path_entry.get(), self.dropdown_current_option,
+                                          self.sort_by_multiple_extension_entry.get(), self.sort_by_keyword_entry.get(),
+                                          self.sort_by_keyword_extension_entry.get(),
+                                          self.sort_by_keyword_new_name_entry.get()))
 
         # Widgets placement
         self.folder_path_text.grid(row=0, column=0, padx=(15, 0), pady=(15, 0))

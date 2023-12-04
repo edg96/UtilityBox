@@ -2,32 +2,34 @@ import os
 
 from cryptography.fernet import Fernet
 
-from auxiliar import reusable_functions
+from src.utilitybox.auxiliar.project_paths import get_project_keys_path
 
 
 class Decryption:
     """
     Utility class for decrypting a file using a specific key.
 
-    Parameters:
-        file_path (str): The folder path where the file is located.
-
     Attributes:
-        file_key_pair (dict[str, str]): The pair that contains file name and it's associated key.
+        self.file_path (str): The file path of the encrypted file.
+        self.file_key_pair (dict[str, str]): A dictionary containing the file name and its associated key file path.
     """
+
     def __init__(self, file_path: str):
+        """
+        Initialize the Decryption object.
+
+        Params:
+            file_path (str): The file path of the encrypted file.
+        """
         self.file_path = file_path
         self.file_key_pair = {}
 
     def load_key(self) -> bytes:
         """
         Load the encryption key associated with the file.
-
-        Returns:
-            bytes: The encryption key as bytes.
         """
         file_name = os.path.splitext(os.path.basename(self.file_path))[0]
-        default_key_path = reusable_functions.get_project_keys_path()
+        default_key_path = get_project_keys_path()
         key_location = os.path.join(default_key_path, file_name + '.key')
         self.file_key_pair[file_name] = key_location
         return open(key_location, 'rb').read()
@@ -35,11 +37,8 @@ class Decryption:
     def remove_key(self) -> None:
         """
         Remove the encryption key file associated with the decrypted file.
-
-        Returns:
-            None
         """
-        default_key_path = reusable_functions.get_project_keys_path()
+        default_key_path = get_project_keys_path()
         key_path = os.path.join(default_key_path, os.path.splitext(os.path.basename(self.file_path))[0] + '.key')
         os.remove(key_path)
 
@@ -47,16 +46,17 @@ class Decryption:
         """
         Decrypt the file using the provided encryption key.
 
-        Parameters:
+        Params:
             key (bytes): The encryption key as bytes.
-
-        Returns:
-            None
         """
         fernet = Fernet(key)
 
-        message = reusable_functions.read_from_file_by_line(self.file_path, 'rb')
-        decrypted_message = fernet.decrypt(message)
-        reusable_functions.write_to_file(self.file_path, decrypted_message, 'wb')
+        with open(self.file_path, 'rb') as file:
+            encrypted_message = file.read()
+
+        decrypted_message = fernet.decrypt(encrypted_message)
+
+        with open(self.file_path, 'wb') as file:
+            file.write(decrypted_message)
 
         self.remove_key()

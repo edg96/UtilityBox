@@ -3,63 +3,29 @@ import tkinter as tk
 
 import customtkinter as ctk
 
-from auxiliar import log_functions, reusable_functions
-from functionalities.delete import Delete
-from auxiliar.path_validator import check_path_existence
+from src.utilitybox.auxiliar.extension_operations import group_files_by_extensions
+from src.utilitybox.auxiliar.file_operations import browse_folder
+from src.utilitybox.auxiliar.log_functions import update_file_log
+from src.utilitybox.auxiliar.operations_messages import log_basic_operation_results
+from src.utilitybox.auxiliar.log_messages import path_invalid_message, update_display_log
+from src.utilitybox.auxiliar.project_paths import get_project_icons_path
+from src.utilitybox.functionalities.delete import Delete
 
 """
-File deletion parameters (used for radio buttons).
+File deletion Params (used for radio buttons).
 """
 DELETE_SINGLE_EXTENSION = 1
 DELETE_MULTIPLE_EXTENSIONS = 2
 DELETE_BY_KEYWORD = 3
 
 
-def _log_sigle_multiple_extension_keyword_results(operation_specific_identifier: str, operation_id: int, files_deleted: dict[str, list[str]]) -> None:
+def _perform_deletion(mainbox, operation_specific_identifier: str, radio_option: int,
+                      folder_path: str, file_extension: str, list_of_file_extensions: str,
+                      keyword: str, keyword_extension: str) -> None:
     """
-    Log the results of sorting files by single or multiple extensions.
+    Perform file deletion based on different criteria based on provided Params and log the results.
 
-    Parameters:
-        operation_specific_identifier (str): The identifier for the sorting operation.
-        operation_id (int): The operation's status code (200 for success, 204 for no content, 404 for error).
-        files_deleted (dict[str, list[str]]): A dictionary containing deleted files grouped by extension.
-    """
-    # Construct a log message with deletion results and update the file log.
-    log_file_message = (f'[{operation_specific_identifier.upper()}: {operation_id}]:'
-                        f'\nDeleted the following files:')
-
-    if files_deleted:
-        for extension in files_deleted:
-            log_file_message = log_file_message + f'\n\tFiles of type: {extension}'
-            for index, file in enumerate(files_deleted[extension], start=1):
-                log_file_message = log_file_message + f'\n\t\t{file}'
-
-    log_functions.update_file_log(log_file_message, operation_specific_identifier)
-
-
-def _log_no_results(operation_specific_identifier: str, operation_id: int) -> None:
-    """
-    Log when no files were deleted in a deletion operation.
-
-    Parameters:
-        operation_specific_identifier (str): The identifier for the deletion operation.
-        operation_id (int): The operation's status code (200 for success, 204 for no content, 404 for error).
-    """
-    # Construct a log message indicating no files were deleted and update the file log.
-    log_file_message = (f'[{operation_specific_identifier.upper()}: {operation_id}]:'
-                        f'\nDeleted the following files:'
-                        f'\n\tNone')
-
-    log_functions.update_file_log(log_file_message, operation_specific_identifier)
-
-
-def _delete_files(mainbox, operation_specific_identifier: str, radio_option: int,
-                  folder_path: str, file_extension: str, list_of_file_extensions: str,
-                  keyword: str, keyword_extension: str) -> None:
-    """
-    Perform file deletion based on different criteria based on provided parameters and log the results.
-
-    Parameters:
+    Params:
         mainbox (MainBox): An instance of the MainBox class (parent).
         operation_specific_identifier (str): The identifier for the deletion operation.
         radio_option (int): The selected radio button option for deletion (1, 2, or 3).
@@ -69,19 +35,21 @@ def _delete_files(mainbox, operation_specific_identifier: str, radio_option: int
         keyword (str): The keyword for file deletion (for deletion by keyword).
         keyword_extension (str): The file extension for keyword-based deletion (for deletion by keyword).
     """
+    file_extension_lower = file_extension.lower()
     operation_code = {'OK': 200, 'NO CONTENT': 204, 'BAD REQUEST': 404}
 
-    operation_id = operation_code['BAD REQUEST']
-    if not check_path_existence(folder_path):
-        log_message = reusable_functions.path_invalid_message(operation_specific_identifier, operation_id, folder_path)
-        log_functions.update_file_log(log_message, operation_specific_identifier)
-        reusable_functions.update_display_log(mainbox, operation_specific_identifier, operation_id)
+    results_id = operation_code['BAD REQUEST']
+    if not os.path.exists(folder_path):
+        log_message = path_invalid_message(operation_specific_identifier, results_id, folder_path)
+        update_file_log(log_message, operation_specific_identifier)
+        update_display_log(mainbox, operation_specific_identifier, results_id)
         return
 
     delete = Delete(folder_path)
+
     try:
         if radio_option == DELETE_SINGLE_EXTENSION:
-            delete.delete_by_single_extension(file_extension)
+            delete.delete_by_single_extension(file_extension_lower)
         elif radio_option == DELETE_MULTIPLE_EXTENSIONS:
             delete.delete_by_multiple_extensions(list_of_file_extensions)
         elif radio_option == DELETE_BY_KEYWORD:
@@ -89,32 +57,34 @@ def _delete_files(mainbox, operation_specific_identifier: str, radio_option: int
     except Exception as e:
         print(e)
 
-    operation_id = operation_code['OK']
-    if not delete.deleted_files and not delete.deleted_files_by_extension:
-        operation_id = operation_code['NO CONTENT']
+    results_id = operation_code['OK']
+    if not delete.files_deleted:
+        results_id = operation_code['NO CONTENT']
 
-    reusable_functions.update_display_log(mainbox, operation_specific_identifier, operation_id)
+    update_display_log(mainbox, operation_specific_identifier, results_id)
 
-    # Log sorting results based on the selected sorting option.
-    if delete.deleted_files or delete.deleted_files_by_extension:
-        _log_sigle_multiple_extension_keyword_results(operation_specific_identifier, operation_id, delete.deleted_files)
-    else:
-        _log_no_results(operation_specific_identifier, operation_id)
+    grouped_files = group_files_by_extensions(delete.files_deleted)
+
+    log_basic_operation_results(operation_specific_identifier, results_id, grouped_files)
 
 
 class DeleteWindow(ctk.CTkToplevel):
+    """
+    Create a window for the delete functionality.
+
+    Notes:
+        The window will not close after the search is performed.
+        The user can edit and modify the values as needed.
+        The window must be closed manually.
+    """
+
     def __init__(self, mainbox):
         """
-        Create a window for the delete functionality.
+        Initialize the DeleteWindow object.
 
-        Parameters:
-            mainbox (MainBox): An instance of the MainBox class that contain usefull information
+        Params:
+            mainbox (MainBox): An instance of the MainBox class that contain usefully information
                 used for different functions in order to keep the main window up to date.
-
-        Notes:
-            The window will not close after the search is performed.
-            The user can edit and modify the values as needed.
-            The window must be closed manually.
         """
         super().__init__()
         self.title(' Delete')
@@ -125,7 +95,7 @@ class DeleteWindow(ctk.CTkToplevel):
         self.radio_current_option = 0
         self.dropdown_current_option = ''
         self.after(250, lambda: self.iconbitmap(
-            (os.path.join(reusable_functions.get_project_icons_path(), 'Delete.ico'))))
+            (os.path.join(get_project_icons_path(), 'Delete.ico'))))
 
         # Widgets functions and variables
         def radiobutton_event():
@@ -148,7 +118,7 @@ class DeleteWindow(ctk.CTkToplevel):
         self.folder_path_entry = ctk.CTkEntry(master=self, width=220)
         self.folder_path_button = ctk.CTkButton(
             master=self, text='Browse folder', font=('Helvetica', 12, 'bold'), fg_color='#00539C', text_color='white',
-            command=lambda: reusable_functions.browse_folder(self.folder_path_entry))
+            command=lambda: browse_folder(self.folder_path_entry))
 
         # Single extension deleting
         radio_var = tk.IntVar(value=0)
@@ -176,16 +146,17 @@ class DeleteWindow(ctk.CTkToplevel):
             command=radiobutton_event, variable=radio_var, value=3)
         self.delete_by_keyword_text = ctk.CTkLabel(master=self, text='Enter the keyword: ')
         self.delete_by_keyword_entry = ctk.CTkEntry(master=self, width=220)
-        self.delete_by_keyword_extension_text = ctk.CTkLabel(master=self, text='Enter the keyword: ')
+        self.delete_by_keyword_extension_text = ctk.CTkLabel(master=self, text='Enter the extension: ')
         self.delete_by_keyword_extension_entry = ctk.CTkEntry(master=self, width=220)
 
         # Action buttons
         self.start_deleting_button = ctk.CTkButton(
             master=self, text='Start deleting', font=('Helvetica', 12, 'bold'), fg_color='green', text_color='white',
-            command=lambda: _delete_files(mainbox, self.operation_specific_identifier, self.radio_current_option,
-                                          self.folder_path_entry.get(), self.dropdown_current_option,
-                                          self.delete_by_multiple_extension_entry.get(),
-                                          self.delete_by_keyword_entry.get(), self.delete_by_keyword_extension_entry.get()))
+            command=lambda: _perform_deletion(mainbox, self.operation_specific_identifier, self.radio_current_option,
+                                              self.folder_path_entry.get(), self.dropdown_current_option,
+                                              self.delete_by_multiple_extension_entry.get(),
+                                              self.delete_by_keyword_entry.get(),
+                                              self.delete_by_keyword_extension_entry.get()))
 
         # Widgets placement
         self.folder_path_text.grid(row=0, column=0, padx=(15, 0), pady=(15, 0))

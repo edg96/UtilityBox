@@ -1,5 +1,7 @@
 # General
 /.venv/
+/resources/results/logs/
+/src/utilitybox/__pycache__/
 /src/utilitybox/auxiliar/__pycache__/
 /src/utilitybox/functionalities/__pycache__/
 /src/utilitybox/frames/__pycache__/

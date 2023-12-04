@@ -4,7 +4,7 @@ import zipfile
 
 import patoolib
 
-from auxiliar import reusable_functions
+from src.utilitybox.auxiliar.project_paths import get_system_path
 
 
 class Archive:
@@ -12,24 +12,25 @@ class Archive:
     Utility class for compressing or decompressing files.
 
     Attributes:
-        default_path (str): The default folder path where the archives will be
+        self.default_path (str): The default folder path where the archives will be
             compressed or decompressed if no specific destination is provided (default path: Desktop).
     """
+
     def __init__(self):
-        self.default_path = reusable_functions.get_system_path()
+        """
+        Initialize the Archive object.
+        """
+        self.default_path = get_system_path()
 
     def compress_zip_files(self, archive_name: str, files_list: list[str], destination_path: str = '') -> None:
         """
         Compress a list of files into a ZIP archive.
 
-        Parameters:
+        Params:
             archive_name (str): The name of the ZIP archive.
             files_list (list[str]): The list of files to be compressed (full path files).
             destination_path (str, optional): The destination folder for the archive.
                 Defaults to the default path if not specified.
-
-        Returns:
-            None
         """
         if not destination_path:
             destination_path = self.default_path
@@ -43,13 +44,10 @@ class Archive:
         """
         Decompress a ZIP archive.
 
-        Parameters:
+        Params:
             archive_file_path (str): The path of the ZIP archive.
             destination_path (str, optional): The destination folder for the content of the archive.
                 Defaults to the default path if none is specified.
-
-        Returns:
-            None
         """
         if not destination_path:
             destination_path = self.default_path
@@ -62,14 +60,11 @@ class Archive:
         """
         Compress a list of files into a RAR archive.
 
-        Parameters:
+        Params:
             archive_name (str): The name of the RAR archive.
             files_list (list[str]): The list of files to be compressed (full path files).
             destination_path (str, optional): The destination folder for the archive.
                 Defaults to the default path if not specified.
-
-        Returns:
-            None
         """
         if not destination_path:
             destination_path = self.default_path
@@ -81,13 +76,10 @@ class Archive:
         """
         Decompress a RAR archive.
 
-        Parameters:
+        Params:
             archive_file_path (str): The path of the RAR archive.
             destination_path (str, optional): The destination folder for the content of the archive.
                 Defaults to the default path if none is specified.
-
-        Returns:
-            None
         """
         if not destination_path:
             destination_path = self.default_path
@@ -97,15 +89,12 @@ class Archive:
     def transfer_to_temporary_folder(self, files_list: list[str], destination_path: str = '') -> None:
         """
         Creates copies of files in a temporary folder to avoid the creation of a subtree style
-        structure containing all the subfolders leading to a file.
+        structure containing all the folders leading to a file.
 
-        Parameters:
+        Params:
             files_list (list[str]): The list of files to be moved.
             destination_path (str, optional): The destination folder for the files.
                 Defaults to the default path if none is specified.
-
-        Returns:
-            None
         """
         if not destination_path:
             destination_path = self.default_path
@@ -120,7 +109,7 @@ class Archive:
         """
         Clean the files that are present in a folder based on a specified list of files.
 
-        Parameters:
+        Params:
             files_list (list[str]): The list of files to be cleaned.
             targeted_path (str, optional): The folder path where the files are located.
                 Defaults to the default path if none is specified.
@@ -131,9 +120,6 @@ class Archive:
                 A: temporary transfer the files
                 B: start compressing
                 C: clean the folder of the copies
-
-        Returns:
-            None
         """
         if not targeted_path:
             targeted_path = self.default_path

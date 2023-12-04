@@ -6,31 +6,29 @@ class Search:
     Utility class for searching within a specific file path while offering different types of search
     criteria tailored to the user's needs.
 
-    Parameters:
-        folder_path (str): The folder path where the search takes place.
-
     Attributes:
-        file_list_by_name (list[str]): A list of files found when searching by name or by both
-            name and extension. This list contains the filenames that match the search criteria.
-        file_list_by_ext (list[str]): A list of files found when searching by extension.
-            This list contains filenames that have the specified extension.
+        self.files_found (list[str]): A list of files found when searching by name or by both
+            name and extension.
     """
-    def __init__(self, folder_path: str):
-        self.folder_path = folder_path
-        self.file_list_by_name = []
-        self.file_list_by_ext = []
 
-    def search_by_name(self, file_name: str, file_extension: str) -> bool:
+    def __init__(self, folder_path: str):
+        """
+        Initialize the Search object.
+
+        Params:
+            folder_path (str): The folder path where the search takes place.
+        """
+        self.folder_path = folder_path
+        self.files_found = []
+
+    def search_by_name(self, file_name: str, file_extension: str) -> None:
         """
         Finds a file or a series of files based on the information provided by the user
         in the search functionality additional window.
 
-        Parameters:
+        Params:
             file_name (str): The name of the file.
             file_extension (str): The extension of the file.
-
-        Returns:
-            bool: True if the list is not empty, False otherwise.
 
         Notes:
             The function can receive an extension which has a different role in comparison with
@@ -44,15 +42,13 @@ class Search:
         for file in files:
             if ((os.path.splitext(file)[0] == file_name or file_name in os.path.splitext(file)[0])
                     and (not file_extension or file.endswith('.' + file_extension))):
-                self.file_list_by_name.append(file)
+                self.files_found.append(file)
 
-        return bool(self.file_list_by_name)
-
-    def search_by_extension(self, file_extension: str) -> bool:
+    def search_by_extension(self, file_extension: str) -> None:
         """
         Finds all the files with the specified extension, regardless of their names.
 
-        Parameters:
+        Params:
             file_extension (str): The extension of the file/files.
 
         Returns:
@@ -61,6 +57,4 @@ class Search:
         files = os.listdir(self.folder_path)
         for file in files:
             if file.endswith('.' + file_extension):
-                self.file_list_by_ext.append(file)
-
-        return bool(self.file_list_by_name)
+                self.files_found.append(file)

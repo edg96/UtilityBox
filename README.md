@@ -1,36 +1,36 @@
 # UtilityBox
 
-UtilityBox is a versatile collection of Python utilities designed to simplify common tasks and provide useful functionalities for developers and users. Whether you need to work with files, manage data, or perform various calculations, UtilityBox has you covered.
+UtilityBox is a versatile collection of Python utilities designed to simplify common tasks and provide useful functionalities for developers and users. Whether you need to work with files, UtilityBox has you covered.
 
 ## Screenshots
 
 <div>
     The application provides a simple interface with a log section attached to it, informing you about the results of the operations.</br>
     </br>
-    <img src="resources/githubimages/A1.jpg" width="400" alt="Screenshot 1"/>
-    <img src="resources/githubimages/A2.jpg" width="400" alt="Screenshot 2">
+    <img src="resources/githubimages/General_View_Without_Logs.jpg" width="400" alt="Screenshot 1"/>
+    <img src="resources/githubimages/General_View_With_Logs.jpg" width="400" alt="Screenshot 2">
 </div>
 
 <div>
     <br>Choose between the options that will satisfy your needs.</br>
     </br>
-    <img src="resources/githubimages/B2.jpg" width="400" alt="Screenshot 4"/>
-    <img src="resources/githubimages/B1.jpg" width="400" alt="Screenshot 3"/>
+    <img src="resources/githubimages/Archives_Window.jpg" width="400" alt="Screenshot 3"/>
+    <img src="resources/githubimages/Data_Protection_Window.jpg" width="400" alt="Screenshot 4"/>
 </div>
 
 <div>
     <br>Log files are distributed by year and operation. You can check them to see exactly which files were modified, including the time (hour, minute, and seconds). Everything is monitored and detailed to help you keep track of your operations.</br>
     </br>
-    <img src="resources/githubimages/C1.jpg" width="400" alt="Screenshot 5"/>
-    <img src="resources/githubimages/C4.jpg" width="400" alt="Screenshot 6"/>
+    <img src="resources/githubimages/Functionalities_Folders.jpg" width="400" alt="Screenshot 5"/>
+    <img src="resources/githubimages/Months_Folders.jpg" width="400" alt="Screenshot 6"/>
     </br>
-    <img src="resources/githubimages/C2.jpg" width="400" alt="Screenshot 6"/>
-    <img src="resources/githubimages/C3.jpg" width="400" alt="Screenshot 6"/>
+    <img src="resources/githubimages/Sort_Log.JPG" width="400" alt="Screenshot 7"/>
+    <img src="resources/githubimages/Data_Protection_Log.JPG" width="400" alt="Screenshot 8"/>
 </div>
 
 ## YouTube Presentation
 
-[![Watch the video](https://img.youtube.com/vi/YAqtHvMKZis/hqdefault.jpg)](https://youtu.be/YAqtHvMKZis?si=eH7NYPJWRCJrLAPa)
+[![Watch the video](https://img.youtube.com/vi/cn4KvAsNky8/hqdefault.jpg)](https://youtu.be/cn4KvAsNky8?si=rxjLl3YemCyRQI8u)
 
 ## Features
 
@@ -80,6 +80,8 @@ Note: The project is developed using 'Python 3.11.3'
 
 6. Install the necessary packages and modules from the requirements.txt:
 > pip install -r requirements.txt
+ 
+7. Run the mainbox.py file and enjoy the application
 
 ## License
 

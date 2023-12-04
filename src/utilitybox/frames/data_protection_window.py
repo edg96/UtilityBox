@@ -3,42 +3,26 @@ import tkinter as tk
 
 import customtkinter as ctk
 
-from auxiliar import log_functions, reusable_functions
-from functionalities.decryption import Decryption
-from functionalities.encryption import Encryption
-from auxiliar.path_validator import check_path_existence
+from src.utilitybox.auxiliar.file_operations import browse_file
+from src.utilitybox.auxiliar.log_functions import update_file_log
+from src.utilitybox.auxiliar.operations_messages import log_encryption_result, log_decryption_result
+from src.utilitybox.auxiliar.log_messages import path_invalid_message, update_display_log
+from src.utilitybox.auxiliar.project_paths import get_project_icons_path
+from src.utilitybox.functionalities.decryption import Decryption
+from src.utilitybox.functionalities.encryption import Encryption
 
 """
-File encryption parameters (used for radio buttons).
+File encryption Params (used for radio buttons).
 """
 ENCRYPTION_OPTION = 1
 DECRYPTION_OPTION = 2
-
-
-def _log_encryption_result(operation_specific_identifier: str, operation_id: int, file_key_pair: dict[str, str]) -> None:
-    """
-    Log the result of an encryption operation.
-
-    Parameters:
-        operation_specific_identifier (str): The operation identifier that specifies the type of operation.
-        operation_id (int): The operation's status code (200 for success, 204 for no content, 404 for error).
-        file_key_pair (dict[str, str]): A dictionary containing file names as keys and key paths as values.
-    """
-    log_file_message = (f'[{operation_specific_identifier.upper()}: {operation_id}]:'
-                        f'\nEncrypted the following file:')
-    for file_name, key_path in file_key_pair.items():
-        log_file_message += f'\n\t{file_name}'
-        log_file_message += '\nKey saved in the following location:'
-        log_file_message += f'\n\t{key_path}'
-
-    log_functions.update_file_log(log_file_message, operation_specific_identifier)
 
 
 def _perform_encryption(mainbox, operation_specific_identifier: str, file_path: str) -> None:
     """
     Perform file encryption.
 
-    Parameters:
+    Params:
         mainbox (MainBox): An instance of the MainBox class.
         operation_specific_identifier (list): A list of operation identifiers for logging.
         file_path (str): The path of the file to be encrypted.
@@ -46,10 +30,10 @@ def _perform_encryption(mainbox, operation_specific_identifier: str, file_path: 
     operation_code = {'OK': 200, 'BAD REQUEST': 404}
 
     operation_id = operation_code['BAD REQUEST']
-    if not check_path_existence(file_path):
-        log_message = reusable_functions.path_invalid_message(operation_specific_identifier, operation_id, file_path)
-        log_functions.update_file_log(log_message, operation_specific_identifier)
-        reusable_functions.update_display_log(mainbox, operation_specific_identifier, operation_id)
+    if not os.path.exists(file_path):
+        log_message = path_invalid_message(operation_specific_identifier, operation_id, file_path)
+        update_file_log(log_message, operation_specific_identifier)
+        update_display_log(mainbox, operation_specific_identifier, operation_id)
         return
 
     operation_id = operation_code['OK']
@@ -59,36 +43,17 @@ def _perform_encryption(mainbox, operation_specific_identifier: str, file_path: 
         key = encryption.load_key()
         encryption.encrypt_file(key)
 
-        reusable_functions.update_display_log(mainbox, operation_specific_identifier, operation_id)
-        _log_encryption_result(operation_specific_identifier, operation_id, encryption.file_key_pair)
+        update_display_log(mainbox, operation_specific_identifier, operation_id)
+        log_encryption_result(operation_specific_identifier, operation_id, encryption.file_key_pair)
     except Exception as e:
         print(e)
-
-
-def _log_decryption_result(operation_specific_identifier: str, operation_id: int, file_key_pair: dict[str, str]) -> None:
-    """
-    Log the result of an decryption operation.
-
-    Parameters:
-        operation_specific_identifier (str): The operation identifier that specifies the type of operation.
-        operation_id (int): The operation's status code (200 for success, 204 for no content, 404 for error).
-        file_key_pair (dict[str, str]): A dictionary containing file names as keys and key paths as values.
-    """
-    log_file_message = (f'[{operation_specific_identifier.upper()}: {operation_id}]:'
-                        f'\nDecrypted the following file:')
-    for file_name, key_path in file_key_pair.items():
-        log_file_message += f'\n\t{file_name}'
-        log_file_message += '\nKey from the folowing location deleted:'
-        log_file_message += f'\n\t{key_path}'
-
-    log_functions.update_file_log(log_file_message, operation_specific_identifier)
 
 
 def _perform_decryption(mainbox, operation_specific_identifier: str, file_path: str) -> None:
     """
     Perform file decryption.
 
-    Parameters:
+    Params:
         mainbox (MainBox): An instance of the MainBox class.
         operation_specific_identifier (list): A list of operation identifiers for logging.
         file_path (str): The path of the file to be encrypted.
@@ -96,10 +61,10 @@ def _perform_decryption(mainbox, operation_specific_identifier: str, file_path: 
     operation_code = {'OK': 200, 'BAD REQUEST': 404}
 
     operation_id = operation_code['BAD REQUEST']
-    if not check_path_existence(file_path):
-        log_message = reusable_functions.path_invalid_message(operation_specific_identifier, operation_id, file_path)
-        log_functions.update_file_log(log_message, operation_specific_identifier)
-        reusable_functions.update_display_log(mainbox, operation_specific_identifier, operation_id)
+    if not os.path.exists(file_path):
+        log_message = path_invalid_message(operation_specific_identifier, operation_id, file_path)
+        update_file_log(log_message, operation_specific_identifier)
+        update_display_log(mainbox, operation_specific_identifier, operation_id)
         return
 
     operation_id = operation_code['OK']
@@ -108,17 +73,18 @@ def _perform_decryption(mainbox, operation_specific_identifier: str, file_path: 
         key = decryption.load_key()
         decryption.decrypt_file(key)
 
-        reusable_functions.update_display_log(mainbox, operation_specific_identifier, operation_id)
-        _log_decryption_result(operation_specific_identifier, operation_id, decryption.file_key_pair)
+        update_display_log(mainbox, operation_specific_identifier, operation_id)
+        log_decryption_result(operation_specific_identifier, operation_id, decryption.file_key_pair)
     except Exception as e:
         print(e)
 
 
-def _start_process(mainbox, operation_specific_identifier: list[str], radio_option: int, file_path: str) -> None:
+def _determine_operation_type(mainbox, operation_specific_identifier: list[str], radio_option: int,
+                              file_path: str) -> None:
     """
-    Start the encryption or decryption process based the user selection.
+    Start the encryption or decryption process based on the user selection.
 
-    Parameters:
+    Params:
         mainbox (MainBox): An instance of the MainBox class.
         operation_specific_identifier (str): The operation identifier that specifies the type of operation(s).
         radio_option (int): An integer representing the selected option (1 for Encryption, 2 for Decryption).
@@ -131,18 +97,22 @@ def _start_process(mainbox, operation_specific_identifier: list[str], radio_opti
 
 
 class DataProtectionWindow(ctk.CTkToplevel):
+    """
+    Create a window for the data protection functionality.
+
+    Notes:
+        The window will not close after the search is performed.
+        The user can edit and modify the values as needed.
+        The window must be closed manually.
+    """
+
     def __init__(self, mainbox):
         """
-        Create a window for the data protection functionality.
+        Initialize the DataProtectionWindow object.
 
-        Parameters:
-            mainbox (MainBox): An instance of the MainBox class that contain usefull information
-                used for different functions in order to keep the main window up to date.
-
-        Notes:
-            The window will not close after the search is performed.
-            The user can edit and modify the values as needed.
-            The window must be closed manually.
+        Params:
+            mainbox (MainBox): An instance of the MainBox class that contains useful information
+                used for different functions to keep the main window up to date.
         """
         super().__init__()
         self.title(' Data protection')
@@ -152,7 +122,7 @@ class DataProtectionWindow(ctk.CTkToplevel):
         self.operation_specific_identifier = ['Encryption', 'Decryption']
         self.radio_current_option = 0
         self.after(250, lambda: self.iconbitmap(
-            (os.path.join(reusable_functions.get_project_icons_path(), 'DataProtection.ico'))))
+            (os.path.join(get_project_icons_path(), 'DataProtection.ico'))))
 
         # Widgets functions and variables
         def radiobutton_event():
@@ -175,13 +145,14 @@ class DataProtectionWindow(ctk.CTkToplevel):
         self.file_path_entry = ctk.CTkEntry(master=self, width=220)
         self.file_path_button = ctk.CTkButton(
             master=self, text='Browse file', font=('Helvetica', 12, 'bold'), fg_color='#00539C', text_color='white',
-            command=lambda: reusable_functions.browse_file(self.file_path_entry))
+            command=lambda: browse_file(self.file_path_entry))
 
         # Action button
         self.start_process_button = ctk.CTkButton(
             master=self, text='Start process', font=('Helvetica', 12, 'bold'), fg_color='green', text_color='white',
-            command=lambda: _start_process(mainbox, self.operation_specific_identifier, self.radio_current_option,
-                                           self.file_path_entry.get()))
+            command=lambda: _determine_operation_type(mainbox, self.operation_specific_identifier,
+                                                      self.radio_current_option,
+                                                      self.file_path_entry.get()))
 
         # Widgets placement
         self.encryption_radiobutton.grid(row=1, column=0, padx=(16, 0), pady=(15, 0), sticky='nw')
