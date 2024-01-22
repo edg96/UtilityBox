@@ -1,7 +1,7 @@
 import os.path
 import logging
 
-from src.utilitybox.auxiliar.folders_configurer import FoldersConfigure
+from src.utilitybox.auxiliar.folders_configure import FoldersConfigure
 
 
 def formatting_log(file_path: str, provided_format: str) -> None:

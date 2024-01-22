@@ -17,10 +17,10 @@ def success_message(operation_unique_identifier: str, operation_id: int) -> str:
         operation_id (int): A HTTP code indicating the state of the result of the operation.
     """
     if operation_id == 200:
-        return (f'[{operation_unique_identifier.upper()} {operation_id}]:'
+        return (f'[{operation_unique_identifier.upper()}: {operation_id}]:'
                 f'\nSuccess: changes performed.')
     elif operation_id == 204:
-        return (f'[{operation_unique_identifier.upper()} {operation_id}]:'
+        return (f'[{operation_unique_identifier.upper()}: {operation_id}]:'
                 f'\nSuccess: no changes performed.')
 
 
@@ -53,9 +53,9 @@ def simple_success_message(operation_unique_identifier: str, operation_id: int) 
         operation_id (int): A HTTP code indicating the state of the result of the operation.
     """
     if operation_id == 200:
-        return f'[{operation_unique_identifier.upper()} {operation_id}]: Success: changes performed'
+        return f'[{operation_unique_identifier.upper()}: {operation_id}]: Success: changes performed'
     elif operation_id == 204:
-        return f'[{operation_unique_identifier.upper()} {operation_id}]: Success: no changes performed'
+        return f'[{operation_unique_identifier.upper()}: {operation_id}]: Success: no changes performed'
 
 
 def simple_path_invalid_message(operation_unique_identifier: str, operation_id: int) -> str:

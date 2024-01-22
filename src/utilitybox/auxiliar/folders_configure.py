@@ -13,9 +13,9 @@ class FoldersConfigure:
     recreating the missing ones, and ensuring the integrity of the application directory hierarchy.
 
     Attributes:
-        self.datetimeday (int): The current day of the month.
-        self.datetimemonth (int): The current month.
-        self.datetimeyear (int): The current year.
+        self.datetime_day (int): The current day of the month.
+        self.datetime_month (int): The current month.
+        self.datetime_year (int): The current year.
         self.results_folder_exists (bool): Flag indicating whether the results folder has been created.
         self.logs_folder_exists (bool): Flag indicating whether the logs folder has been created.
         self.year_folder_exists (bool): Flag indicating whether the year folder has been created.
@@ -29,9 +29,9 @@ class FoldersConfigure:
         """
         Initialize the FoldersConfigure object.
         """
-        self.datetimeday = date.today().day
-        self.datetimemonth = date.today().month
-        self.datetimeyear = date.today().year
+        self.datetime_day = date.today().day
+        self.datetime_month = date.today().month
+        self.datetime_year = date.today().year
         self.results_folder_exists = False
         self.logs_folder_exists = False
         self.year_folder_exists = False
@@ -74,7 +74,7 @@ class FoldersConfigure:
         """
         Provides the default path of the year folder.
         """
-        year_folder_path = os.path.join(self.generate_default_logs_folder_path(), str(self.datetimeyear))
+        year_folder_path = os.path.join(self.generate_default_logs_folder_path(), str(self.datetime_year))
 
         return year_folder_path
 
@@ -82,8 +82,8 @@ class FoldersConfigure:
         """
         Provides the default path of the month folder.
         """
-        month_name = calendar.month_name[self.datetimemonth]
-        month_folder_path = os.path.join(self.generate_default_logs_folder_path(), str(self.datetimeyear), month_name)
+        month_name = calendar.month_name[self.datetime_month]
+        month_folder_path = os.path.join(self.generate_default_logs_folder_path(), str(self.datetime_year), month_name)
 
         return month_folder_path
 
@@ -219,7 +219,7 @@ class FoldersConfigure:
         Returns:
             str: The generated log file name.
         """
-        log_name = str(self.datetimeday) + '_ublog.txt'
+        log_name = str(self.datetime_day) + '_ublog.txt'
         return log_name
 
     def get_year_folder_path(self) -> str:
